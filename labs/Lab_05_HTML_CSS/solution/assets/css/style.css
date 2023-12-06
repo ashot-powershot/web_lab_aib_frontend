@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap');
+/* @import url('./reset.css'); */
+header {
+    margin: 12px;
+    text-align: left;
+    font-size: 20px;   
+}
+
+.item{
+    width: 100%;
+    display: block;
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 20px;
+    
+  }
+
+  .main-catalog{
+    width: 100%;
+    max-height: fit-content;
+    margin-bottom: 40px;
+    margin-top: 40px;
+    margin-left: 12px;
+    margin-right: 12px;
+    
+    display: flex;
+    
+  }
+  .image_main{
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+  }
+.img_center{
+    
+    width: 100%;
+    max-height: 10%;
+    display: block;
+}
+h1{
+    margin-top: 40px;
+    text-align: center;
+}
+body{
+    width: auto;
+    font-size: 100%;
+    font-family: 'Verdana',  sans-serif;
+    margin: 0 auto;
+}
+.head_text {
+    margin-inline-end: 20px;
+    text-decoration: underline;
+  }
+.head_text_wrap:hover{
+    text-decoration: none;
+}
+
+
+  
+ @media (max-width: 640px){
+    body{
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    header {
+        margin: 12px;
+        text-align: left;
+        font-size: 20px;   
+    }
+
+   
+
+      .main-catalog{
+        max-width: 100%;
+        max-height: fit-content;
+        margin-bottom: 40px;
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+      } 
+      .item{
+        margin-left: 12px;
+        margin-right: 12px;
+        max-width: auto;
+        display: block;
+        text-align: left;
+        font-style: italic;
+        margin-bottom: 20px;
+        
+      }
+      .image_main{
+        max-width: auto;
+        display: block;
+        margin-bottom: 10px;
+      }
+ }
+  
