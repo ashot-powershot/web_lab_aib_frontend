@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>JS</title>
+</head>
+<body>
+<script>
+        console.log("Задание 1")
+    let condition = 'Лабораторная 6'
+    let appel = 10
+
+    console.log(appel)
+    console.log('Good game is ' + condition)
+
+    console.log("\nЗадание 2")
+    let proizvol = 5
+    let strok = '100'
+    let a = true
+
+    console.log(proizvol + strok)
+    console.log(proizvol + a)
+    console.log(strok + proizvol)
+    console.log(strok + a)
+    console.log(a+proizvol)
+    console.log(a+strok)
+
+    console.log("\nЗадание 3")
+    let array = new Array(10);
+    for(let i=0; i<10;i++)
+    {
+        let b = Math.floor(Math.random() * 20) - 10 
+        array[i]=b
+    }
+    let nearray = array.filter(item => 
+    {
+        if(item>0)
+        return true;
+    })
+
+    console.log("\nЗадание 4");
+    function RandomNumber() 
+    {
+    return Math.floor(Math.random() * 50) + 1; // случайное число от 1 до 50 
+    }
+    var random = RandomNumber();
+    console.log(random);
+
+    const ar = (arr, chislo) => arr.map(element => element * chislo);
+    let mas = ar(array, appel);
+    console.log(mas);
+
+    let randomslovo = function(length) {
+    let result = '';
+    let alf = 'abcdefghijklmnopqrstuvwxyz';
+    for (let i = 0; i < length; i++) {
+    result += alf.charAt(Math.floor(Math.random() * alf.length));
+    }
+    return result;
+    }
+    console.log(randomslovo(8));
+
+    console.log("\nЗадание 5")
+    let FIO = {};
+
+    FIO.firstName = "Игорь";
+    FIO.surname = "Коцулевский";
+    FIO.patronymic = "Вадимович";
+    FIO.birthday = "2003";
+    FIO.hobby = "баскетбол";
+    FIO.group = "АИБ-3-043";
+
+    FIO.getInfo = function() {
+    let fullName = this.surname + " " + this.firstName + " " + this.patronymic;
+    let birthdayYear = new Date(this.birthday).getFullYear();
+    let age = new Date().getFullYear() - birthdayYear;
+    let info = `${fullName}, родился в ${birthdayYear}, увлекается ${this.hobby}, возраст ${age} лет`;
+    return info;
+    };
+    alert(FIO.getInfo());
+
+    let work = {
+    "Иванов": 5100,
+    "Петров": 4700,
+    "Сидоров": 6000,
+    "Смирнов": 5500,
+    "Артемьев": 4500,
+    "Титов": 7000,
+    "Тихомиров": 3500,
+    "Каспарян": 4800,
+    "Гурьянов": 5200,
+    "Бутусов": 4300
+    };
+
+    let result_salary = 0;
+    for (let key in work) {
+    result_salary += work[key];
+    }
+console.log("Общая зарплата сотрудников:", result_salary);
+</script>
+</body>
+</html>
