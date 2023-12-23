@@ -1,0 +1,33 @@
+#color-area {
+  width: 100%;
+  min-height: 300px;
+  border: 1px solid black;
+  margin-top: 10px;
+  white-space: nowrap; 
+  overflow-x: scroll; 
+}
+.color-block {
+  display: inline-block;
+  width: 270px;
+  height: 270px;
+  margin: 5px;
+  border: 1px solid black;
+}
+#color-preview {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  border: 1px solid black;
+}
+#generate-button {
+  margin-top: 10px;
+}
+#input-area{
+  margin-top: 15px;
+  width: 100%;
+}
+#add-area{
+  margin-top: 15px;
+  width: 100%;  
+}
