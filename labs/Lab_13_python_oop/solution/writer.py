@@ -1,12 +1,12 @@
 import xlsxwriter
-from blocks import ParametrsBlock, PayersBlock, GeographyBlock, StatusBlock
+from blocks import HeaderBlock, PayersBlock, CitiesBlock, BankAccountBlock
 
 class Writer:
     CLASSES = [
-        ParametrsBlock,
+        HeaderBlock,
         PayersBlock,
-        GeographyBlock,
-        StatusBlock
+        CitiesBlock,
+        BankAccountBlock
     ]
 
     def __init__(self, data):
@@ -15,13 +15,14 @@ class Writer:
     def write_excel(self, output_file):
         workbook = xlsxwriter.Workbook(output_file)
         worksheet = workbook.add_worksheet()
-
+        worksheet.set_column('A:Z', 35)
         row = 0
         col = 0
 
-        for blocks in self.CLASSES:
-            block_instance = blocks(worksheet, row, col, self.data)
-            block_instance.wr_header()
-            block_instance.wr_data()
+        for i in range(0, len(self.CLASSES)):
+            worksheet.set_column(i,i,30)
+            block_instance = self.CLASSES[i](worksheet, workbook, row, col, self.data)
+            block_instance.write_header()
+            block_instance.write_data()
 
         workbook.close()

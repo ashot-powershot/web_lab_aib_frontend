@@ -1,55 +1,79 @@
 from datetime import datetime
-
 from base import BaseBlock
 
 
-class ParametrsBlock(BaseBlock):
-    NAME = 'ПАРАМЕТРЫ ЗАПРОСА'
-    DATE = 'Дата выгрузки'
-    PERIOD = 'Период, за который сделана выгрузка'
+class HeaderBlock(BaseBlock):
+    NAME = "Параметры запроса"
+    DATE = "Дата выгрузки"
+    PERIOD = "Период за который сделана выгрузка"
 
-    def wr_header(self):
-        self.ws.write(self.row, self.col, self.NAME)  # 00
+    def write_header(self):
+        hf = self.workbook.add_format(self.header_format)
+        hf.set_text_wrap()
+        hf.set_align('center')
 
-    def wr_data(self):
+        tf = self.workbook.add_format(self.title_format)
+        tf.set_text_wrap()
+        tf.set_align('center')
+
+        self.worksheet.write('A1', self.NAME, hf)
+        self.worksheet.write('A2', self.DATE, tf)
+        self.worksheet.write('A3', self.PERIOD, tf)
+        self.row = 1
+        self.col = 1
+
+    def write_data(self):
+        tf = self.workbook.add_format(self.title_format)
+        tf.set_text_wrap()
+        tf.set_align('center')
+
+        date_now = datetime.now().strftime('%d.%m.%Y')
+        self.worksheet.write(self.row, self.col, date_now, tf)
+
         self.row += 1
-        self.ws.write(self.row, self.col, self.DATE)  # 10
-
-        self.col += 1
-        date = datetime.now().strftime('%d.%m.%Y')
-        self.ws.write(self.row, self.col, date)  # 11
-
-        self.col -= 1
-        self.row += 1
-        self.ws.write(self.row, self.col, self.PERIOD)  # 20
-
-        self.col += 1
         dates = [payment['created_at'] for payment in self.data['payments']]
         dates = [datetime.fromisoformat(date[:-1]) for date in dates]
         dates.sort()
-        date_low_str = dates[0].strftime('%d-%m-%Y')
-        date_upp_str = dates[-1].strftime('%d-%m-%Y')
-        date = f'{date_low_str} - {date_upp_str}'
-        self.ws.write(self.row, self.col, date)  # 21
+        date_low_str = dates[0].strftime('%d.%m.%Y')
+        date_upp_str = dates[-1].strftime('%d.%m.%Y')
+        period = f'{date_low_str} - {date_upp_str}'
+        self.worksheet.write(self.row, self.col, period, tf)
 
         self.col = 0
         self.row += 2
 
 
 class PayersBlock(BaseBlock):
-    NAME = 'ОТЧЕТ ПО АКТИВНОСТИ КЛИЕНТОВ'
-    TOP = 'Топ 10 клиентов'
+    NAME = "Отчёт по активным клиентам"
+    TOP = "Топ клиентов по количеству платежей"
 
-    def wr_header(self):
+    def write_header(self):
+        hf = self.workbook.add_format(self.header_format)
+        hf.set_text_wrap()
+        hf.set_align('center')
+
+        tf = self.workbook.add_format(self.title_format)
+        tf.set_text_wrap()
+        tf.set_align('center')
+
+        t2f = self.workbook.add_format(self.title2_format)
+        t2f.set_text_wrap()
+        t2f.set_align('center')
+
         self.row = 5
         self.col = 0
-        self.ws.write(self.row, self.col, self.NAME)
-        self.row += 1
-        self.ws.write(self.row, self.col, self.TOP)
-        self.col += 1
+        self.worksheet.write(self.row, self.col, self.NAME, hf)
+        self.worksheet.write('A7', self.TOP, tf)
 
-    def wr_data(self):
+    def write_data(self):
+        t2f = self.workbook.add_format(self.title2_format)
+        t2f.set_text_wrap()
+        t2f.set_align('center')
+
+        self.row += 1
+        self.col += 1
         clients_payments = []
+
         for client in self.data['clients']:
             for payment in self.data['payments']:
                 if client['id'] == payment['client_id']:
@@ -71,106 +95,117 @@ class PayersBlock(BaseBlock):
             })
 
         for q in quarters:
-            self.ws.write(self.row, self.col, q)
+            self.worksheet.write(self.row, self.col, q, t2f)
             srt = sorted(quarters[q], key=lambda x: x['payment_amount'])[:10]
             for s in srt:
                 self.row += 1
-                self.ws.write(self.row, self.col, s['fio'])  # последний на 16 строке
+                self.worksheet.write(self.row, self.col, s['fio'])
             self.row -= 10
             self.col += 1
 
 
-class GeographyBlock(BaseBlock):
-    NAME = 'ГЕОГРАФИЯ КЛИЕНТОВ'
+class CitiesBlock(BaseBlock):
+    NAME = "География клиентов"
     STATISTIC = 'Статистика распределения клиентов'
     CITY = 'Города'
-    AMOUNT = 'Kоличество клиентов'
+    AMOUNT = 'Kоличество клиентов по городам'
+    Russia = 'Russia'
 
-    def wr_header(self):
-        self.col = 0
-        self.row = 19
-        self.ws.write(self.row, self.col, self.NAME)
-        self.row += 1
-        self.ws.write(self.row, self.col, self.STATISTIC)
-        self.col += 1
-        self.ws.write(self.row, self.col, self.CITY)
-        self.col += 1
-        self.ws.write(self.row, self.col, self.AMOUNT)
-        self.col = 1
-        self.row += 1
+    def write_header(self):
+        hf = self.workbook.add_format(self.header_format)
+        hf.set_text_wrap()
+        hf.set_align('center')
 
-    def wr_data(self):
-        cities = {}
-        for client in self.data['clients']:
+        tf = self.workbook.add_format(self.title_format)
+        tf.set_text_wrap()
+        tf.set_align('center')
+
+        t2f = self.workbook.add_format(self.title2_format)
+        t2f.set_text_wrap()
+        t2f.set_align('center')
+
+        self.worksheet.write('A19', self.NAME, hf)
+        self.worksheet.merge_range('A20:A21', self.STATISTIC, tf)
+        self.worksheet.write('B21', self.CITY, t2f)
+        self.worksheet.write('C21', self.AMOUNT, t2f)
+        self.worksheet.merge_range('B20:C20', self.Russia, t2f)
+
+    def write_data(self):
+        self.row = 20
+        self.row += 1
+        self.col += 1
+        clients = self.data['clients']
+
+        city_counts = {}
+        for client in clients:
             city = client['city']
-            if city in cities:
-                cities[city] += 1
-            else:
-                cities[city] = 1
+            city_counts[city] = city_counts.get(city, 0) + 1
 
-        sort_cities = sorted(cities.items(), key=lambda x: x[1], reverse=True)
+        top_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)[:10]
 
-        for city, count in sort_cities[:10]:
-            self.ws.write(self.row, self.col, city)
-            self.col += 1
-            self.ws.write(self.row, self.col, count)  # на 30й строке
-            self.col -= 1
-            self.row += 1
+        for i, (city, count) in enumerate(top_cities, start=1):
+            self.worksheet.write(self.row + i - 1, self.col, f"{i}. {city}")
+            self.worksheet.write(self.row + i - 1, self.col + 1, f"{count}")
 
 
-class StatusBlock(BaseBlock):
-    NAME = 'АНАЛИЗ СОСТОЯНИЯ СЧЕТА'
+class BankAccountBlock(BaseBlock):
+    NAME = "Анализ состояния счёта"
     STATISTIC = 'Статистика состояния счета'
     CLIENT = 'Клиент'
-    STATE = 'Состояние счета'
+    STATE = 'Состояние счета клиента'
     DEBT = 'Задолженность'
     PROFIT = 'Прибыль'
 
-    def wr_header(self):
-        self.col = 0
-        self.row = 33
-        self.ws.write(self.row, self.col, self.NAME)
-        self.ws.merge_range('A35:A36', self.STATISTIC)
-        self.ws.merge_range('B35:C35', self.DEBT)
-        self.ws.merge_range('E35:D35', self.PROFIT)
-        self.col += 1
-        self.row += 2
-        self.ws.write(self.row, self.col, self.CLIENT)
-        self.col += 1
-        self.ws.write(self.row, self.col, self.STATE)
-        self.col += 1
-        self.ws.write(self.row, self.col, self.CLIENT)
-        self.col += 1
-        self.ws.write(self.row, self.col, self.STATE)
+    def write_header(self):
+        hf = self.workbook.add_format(self.header_format)
+        hf.set_text_wrap()
+        hf.set_align('center')
 
-    def wr_data(self):
+        tf = self.workbook.add_format(self.title_format)
+        tf.set_text_wrap()
+        tf.set_align('center')
+
+        t2f = self.workbook.add_format(self.title2_format)
+        t2f.set_text_wrap()
+        t2f.set_align('center')
+
+        self.worksheet.write('A34', self.NAME, hf)
+        self.worksheet.merge_range('A35:A36', self.STATISTIC, tf)
+        self.worksheet.merge_range('B35:C35', self.DEBT, t2f)
+        self.worksheet.merge_range('E35:D35', self.PROFIT, t2f)
+        self.worksheet.write('B36', self.CLIENT, t2f)
+        self.worksheet.write('E36', self.STATE, t2f)
+        self.worksheet.write('D36', self.CLIENT, t2f)
+        self.worksheet.write('C36', self.STATE, t2f)
+
+    def write_data(self):
         self.col = 1
         self.row = 36
+        clients = self.data['clients']
+        payments = self.data['payments']
 
-        status = []
-        for client in self.data['clients']:
-            for payment in self.data['payments']:
-                if client['id'] == payment['client_id']:
-                    status.append({
-                        'fio': client['fio'],
-                        'payment_amount': payment['amount'],
-                    })
+        account_balances = {}
+        for payment in payments:
+            client_id = payment['client_id']
+            amount = payment['amount']
+            account_balances[client_id] = account_balances.get(client_id, 0) + amount
 
-        status.sort(key=lambda x: x['payment_amount'], reverse=True)
+        top_balances = sorted(account_balances.items(), key=lambda x: x[1], reverse=True)[:10]
+        self.col = 1
+        self.row = 36
+        for i, (client_id, balance) in enumerate(top_balances, start=1):
+            client_info = next(client for client in clients if client['id'] == client_id)
+            fio = client_info['fio']
+            rounded_balance = round(balance, 2)
+            self.worksheet.write(self.row + i - 1, self.col, f"{i}. {fio}")
+            self.worksheet.write(self.row + i - 1, self.col + 1, f"{rounded_balance}")
 
-        for s in status[-10:]:
-            self.ws.write(self.row, self.col, s['fio'])
-            self.col += 1
-            self.ws.write(self.row, self.col, s['payment_amount'])
-            self.col -= 1
-            self.row += 1
-
+        bottom_balances = sorted(account_balances.items(), key=lambda x: x[1])[:10]
         self.col = 3
         self.row = 36
-
-        for s in status[:10]:
-            self.ws.write(self.row, self.col, s['fio'])
-            self.col += 1
-            self.ws.write(self.row, self.col, s['payment_amount'])
-            self.col -= 1
-            self.row += 1
+        for i, (client_id, balance) in enumerate(bottom_balances, start=1):
+            client_info = next(client for client in clients if client['id'] == client_id)
+            fio = client_info['fio']
+            rounded_balance = round(balance, 2)
+            self.worksheet.write(self.row + i - 1, self.col, f"{i}. {fio}")
+            self.worksheet.write(self.row + i - 1, self.col + 1, f"{rounded_balance}")

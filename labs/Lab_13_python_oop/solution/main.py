@@ -6,7 +6,7 @@ from writer import Writer
 
 def load_data(file_name):
     path = os.path.join(
-        './../', file_name
+        '../', file_name
     )
 
     with open(path, 'r', encoding='utf-8') as file:
